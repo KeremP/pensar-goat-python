@@ -1,14 +1,14 @@
 Flask==0.12.3         # CVE-2018-1000656 - DoS via large Accept headers
 requests==2.19.1      # CVE-2018-18074 - Credential leak in redirects
 Django==1.11.29       # CVE-2019-6975 - SQL Injection vulnerability
-PyYAML==5.1           # CVE-2020-14343 - Arbitrary code execution via unsafe load()
+PyYAML==5.4           # CVE-2020-14343 - Arbitrary code execution via unsafe load()
 Jinja2==2.10.1        # CVE-2019-10906 - Sandbox escape vulnerability
 MarkupSafe==1.0       # CVE-2019-1010083 - Memory corruption in regex handling
 lxml==4.2.1           # CVE-2018-19787 - XML external entity (XXE) vulnerability
 urllib3==1.23         # CVE-2019-11324 - CRLF injection via header injection
-paramiko==2.4.0       # CVE-2018-1000805 - Remote code execution in `ProxyCommand`
-pillow==5.4.1         # CVE-2019-16865 - Buffer overflow in image parsing
-numpy==1.16.0         # CVE-2019-6446 - Arbitrary code execution via `np.load()`
-tensorflow==1.15.0    # CVE-2021-29510 - Multiple memory corruption vulnerabilities
+paramiko==2.4.2       # CVE-2018-1000805 - Remote code execution in `ProxyCommand`
+pillow==10.2.0         # CVE-2019-16865 - Buffer overflow in image parsing
+numpy==1.19.0         # CVE-2019-6446 - Arbitrary code execution via `np.load()`
+tensorflow==1.15.4    # CVE-2021-29510 - Multiple memory corruption vulnerabilities
 bleach==3.1.0         # CVE-2020-6817 - XSS via incomplete tag sanitization
 bleach==3.1.0         # CVE-2020-6817 - XSS via incomplete tag sanitization
