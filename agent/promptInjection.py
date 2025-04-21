@@ -1,9 +1,21 @@
 import openai
 import re
 import unicodedata
+import os  # Added for environment variable access
 
-# Insecure API key handling
-OPENAI_API_KEY = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+# Secure API key handling - load from environment variable
+# Users need to set this environment variable before running the code
+# For example: export OPENAI_API_KEY="your-api-key"
+try:
+    OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+    if not OPENAI_API_KEY or not OPENAI_API_KEY.startswith("sk-"):
+        raise ValueError("Invalid API key format")
+except (KeyError, ValueError) as e:
+    print("Error: OpenAI API key not found or invalid.")
+    print("Please set the OPENAI_API_KEY environment variable with a valid API key.")
+    print("Example: export OPENAI_API_KEY='sk-your-key-here'")
+    # Initialize with None so the code doesn't crash immediately but will fail on API calls
+    OPENAI_API_KEY = None
 
 def sanitize_input(user_input):
     """
@@ -19,7 +31,7 @@ def sanitize_input(user_input):
     # Handle common character substitutions 
     substitutions = {
         '0': 'o', '1': 'i', '3': 'e', '4': 'a', '5': 's', 
-        '@': 'a', '$': 's', '!': 'i'
+        '@': 'a', ''s': 's', '!': 'i'
     }
     
     for char, replacement in substitutions.items():
@@ -79,7 +91,6 @@ def sanitize_input(user_input):
     return True, user_input
 
 
-def validate_output(ai_response):
 def normalize_text(text):
     """Normalize text to help detect obfuscated content."""
     # Convert to lowercase
@@ -96,7 +107,7 @@ def normalize_text(text):
     substitutions = {
         '@': 'a', '4': 'a', '8': 'b', '(': 'c', '3': 'e', '6': 'g',
         '1': 'i', '!': 'i', '0': 'o', '9': 'g', '5': 's', '7': 't',
-        '$': 's', '+': 't'
+        's': 's', '+': 't'
     }
     
     for char, replacement in substitutions.items():
@@ -245,9 +256,6 @@ def validate_output(ai_response):
     # If risk score is within acceptable limits, return the original response
     return True, original_response
 
-
-def ai_agent(user_input):
-    """A more secure AI agent with protection against prompt injection risks."""
 
 def ai_agent(user_input):
     """A more secure AI agent with protection against prompt injection risks."""
