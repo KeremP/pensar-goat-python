@@ -80,11 +80,6 @@ def fetch():
         
         # Check if URL scheme is http or https (no file:// or other protocols)
         if parsed_url.scheme not in ['http', 'https']:
-    return stdout.read()
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
             return "Access to internal networks is not allowed", 403
         
         # Disable redirects to prevent unintended access to sensitive endpoints
@@ -109,11 +104,6 @@ def run_ssh_command():
         username (str): SSH username
         password (str): SSH password
         command (str): Command to execute on the server
-    return stdout.read()
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
         
     Raises:
         ValueError: If parameters are invalid
@@ -148,28 +138,4 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
-    app.run(debug=True)
-    # Get debug mode from environment variable, default to False for security
-    debug_mode = os.environ.get("FLASK_DEBUG", "False").lower() == "true"
-    app.run(debug=debug_mode)
-        response = requests.get(url, allow_redirects=True, timeout=10)
-        return response.text
-    except Exception as e:
-        return f"Error processing URL: {str(e)}", 400
-
-
-# ======== 6. Remote Code Execution via Paramiko ========
-def run_ssh_command():
-    ssh.set_missing_host_key_policy(
-        paramiko.AutoAddPolicy()
-    )  # Automatically accepting any key
-    ssh.connect("malicious-server.com", username="user", password="pass")
-    stdin, stdout, stderr = ssh.exec_command("ls")
-    return stdout.read()
-
-    return stdout.read()
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
