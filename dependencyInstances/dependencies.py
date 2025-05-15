@@ -6,6 +6,7 @@ import paramiko  # Vulnerable to RCE in older versions
 import lxml.etree as ET  # Vulnerable to XXE attacks
 from urllib.parse import urlparse
 import ipaddress
+import os  # Added import for os.environ
 
 app = flask.Flask(__name__)
 
@@ -79,8 +80,25 @@ def is_valid_url(url):
         if not parsed.netloc:
             return False
             
-        # Prevent localhost access
-    return stdout.read()
+        # Prevent localhost access and private network access
+        hostname = parsed.netloc.split(':')[0]  # Extract hostname without port
+        
+        try:
+            ip = ipaddress.ip_address(hostname)
+            if ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_unspecified:
+                return False
+        except ValueError:
+            # Not an IP address, continue with other checks
+            pass
+            
+        # Domain allowlist - uncomment and customize based on application needs
+        # allowed_domains = ['api.example.com', 'data.example.org', 'trusted-source.com']
+        # if not any(hostname == domain or hostname.endswith('.' + domain) for domain in allowed_domains):
+        #     return False
+            
+        return True
+    except Exception:
+        return False
 
 
 if __name__ == "__main__":
