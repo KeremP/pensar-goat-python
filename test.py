@@ -84,7 +84,7 @@ def fetch():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
             return "Access to internal networks is not allowed", 403
         
         # Disable redirects to prevent unintended access to sensitive endpoints
@@ -113,7 +113,7 @@ def run_ssh_command():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
         
     Raises:
         ValueError: If parameters are invalid
@@ -148,10 +148,10 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
-    app.run(debug=True)
+    app.run(debug=False)
+    app.run(debug=False)
     # Get debug mode from environment variable, default to False for security
-    debug_mode = os.environ.get("FLASK_DEBUG", "False").lower() == "true"
+    debug_mode = False
     app.run(debug=debug_mode)
         response = requests.get(url, allow_redirects=True, timeout=10)
         return response.text
@@ -172,4 +172,4 @@ def run_ssh_command():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
