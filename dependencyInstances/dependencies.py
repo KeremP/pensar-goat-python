@@ -79,12 +79,9 @@ def is_valid_url(url):
         if not parsed.netloc:
             return False
             
-        # Prevent localhost access
-    return stdout.read()
+        hostname = parsed.hostname
 
-
-if __name__ == "__main__":
-    app.run(debug=True)
+        # Prevent localhost and private IPs
         try:
             ip = ipaddress.ip_address(hostname)
             if ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_unspecified:
@@ -106,15 +103,44 @@ if __name__ == "__main__":
 # ======== 5. Insecure Request Handling ========
 @app.route("/fetch")
 def fetch():
-    """Securely fetch content from external URLs"""
+    """SECURE: Fetch content from external URLs and safely return as plain text"""
     url = flask.request.args.get("url")
     
     if not url or not is_valid_url(url):
         return "Invalid or disallowed URL", 400
-        
+
     try:
-        response = requests.get(url, allow_redirects=True, timeout=5)
-        return response.text
+        response = requests.get(url, allow_redirects=True, timeout=5, stream=True)
+        # Only allow 'safe' content-types, e.g. plain text or JSON, never serve as HTML
+        content_type = response.headers.get('Content-Type', '').split(';')[0].strip()
+        allowed_types = [
+            'text/plain',
+            'application/json',
+            'application/octet-stream',
+        ]
+        if content_type not in allowed_types:
+            # Always serve response as plain text to the client, never as HTML
+            # Redact dangerous types (like text/html, application/xhtml+xml, image/svg+xml, etc.)
+            safe_content_type = 'text/plain'
+        else:
+            safe_content_type = content_type
+
+        # Stream response to prevent DoS via giant files
+        def generate():
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    yield chunk
+
+        # Always force download for binary types, otherwise return as plain text
+        if safe_content_type == 'application/octet-stream':
+            headers = {
+                'Content-Type': safe_content_type,
+                'Content-Disposition': 'attachment; filename="downloaded_content"'
+            }
+            return flask.Response(generate(), headers=headers)
+        else:
+            headers = {'Content-Type': safe_content_type}
+            return flask.Response(generate(), headers=headers)
     except requests.RequestException:
         return "Error fetching URL", 400
 
