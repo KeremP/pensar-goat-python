@@ -15,8 +15,6 @@ ALLOWED_DOMAINS = ['api.example.com', 'data.example.org', 'public-api.com']
 conn = sqlite3.connect(":memory:")
 cursor = conn.cursor()
 cursor.execute(
-cursor = conn.cursor()
-cursor.execute(
     "CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)"
 )
 cursor.execute("INSERT INTO users (username, password) VALUES ('admin', 'password123')")
@@ -34,7 +32,6 @@ def login():
     user = cursor.fetchone()
 
     if user:
-        return f"Welcome {user[1]}!"
         return f"Welcome {user[1]}!"
     return "Invalid credentials."
 
@@ -71,30 +68,30 @@ def upload_xml():
 def fetch():
     """Protected against SSRF attacks"""
     url = flask.request.args.get("url")
-    
+
     # Validate URL
     if not url or not isinstance(url, str):
         return "Invalid URL", 400
-    
+
     # Parse the URL to validate protocol and domain
     try:
         parsed_url = urlparse(url)
-        
-    return stdout.read()
 
+        # Ensure the scheme is http or https
+        if parsed_url.scheme not in ("http", "https"):
+            return "Invalid URL scheme. Only http and https are allowed.", 400
 
-if __name__ == "__main__":
-    app.run(debug=True)
+        # Ensure the domain is whitelisted
         if parsed_url.netloc not in ALLOWED_DOMAINS:
             return f"Domain not in whitelist. Allowed domains: {', '.join(ALLOWED_DOMAINS)}", 403
-        
+
         # Make the request with redirects disabled
         response = requests.get(url, allow_redirects=False)
-        
+
         # Check if the response is a redirect
         if response.status_code in [301, 302, 303, 307, 308]:
             return "Redirects are not allowed", 403
-            
+
         return response.text
     except Exception as e:
         return f"Error processing URL: {str(e)}", 400
@@ -112,11 +109,5 @@ def run_ssh_command():
     return stdout.read()
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
-
-if __name__ == "__main__":
-    app.run(debug=True)
-    app.run(debug=debug_mode)
 if __name__ == "__main__":
     app.run(debug=True)
